@@ -1,0 +1,32 @@
+package Prototype;
+public class Auto extends Vehiculo {
+
+    public String tipoCaja;
+    public int cantidadPasajeros;
+    
+    public Auto() {
+    }
+
+    public Auto(Auto target) {
+        super(target);
+        if(target != null) {
+            this.tipoCaja = target.tipoCaja;
+            this.cantidadPasajeros = target.cantidadPasajeros;
+        }
+    }
+    
+    @Override
+    public Auto clonar() {
+        return new Auto(this);
+    }
+    
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Auto)) {
+            return false;
+        }
+        Auto auto = (Auto) obj;
+        return super.equals(auto) &&
+               this.tipoCaja.equals(auto.tipoCaja) &&
+               this.cantidadPasajeros == auto.cantidadPasajeros;
+    }
+}
