@@ -6,7 +6,11 @@ public abstract class Vehiculo {
     public String motor;
     public int cantidadRuedas;
 
-    public Vehiculo() {
+    public Vehiculo(String mo, String co, String mot, int r) {
+        modelo=mo;
+        color=co;
+        motor=mot;
+        cantidadRuedas=r;
     }
 
     public Vehiculo(Vehiculo target) {
@@ -17,7 +21,10 @@ public abstract class Vehiculo {
             this.cantidadRuedas = target.cantidadRuedas;
         }
     }
-
+    
+    public int verRuedas(){
+        return cantidadRuedas;
+    }
     public abstract Vehiculo clonar();
 
     public boolean equals(Object obj) {
