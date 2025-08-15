@@ -1,0 +1,116 @@
+¡Vamos con el flujo completo, bien práctico y sin código “real”, solo pasos + pseudo!
+
+Flujo de punta a punta (Prototype → Fork/Join → Resultado)
+
+0) Dominio (qué datos tiene cada vehículo)
+	•	Vehiculo (abstracta) con, entre otros: consumoMensual (p. ej. litros o $).
+	•	Auto extiende Vehiculo.
+
+El atributo clave para el ejemplo es consumoMensual.
+
+⸻
+
+1) Preparar un prototipo (Prototype)
+
+Objetivo: crear rápido una flota grande con valores coherentes.
+	•	Definís un Auto prototipo:
+Auto prototipo = { marca, modelo, motor, …, consumoMensual = 55 }
+	•	Generás N autos clonando ese prototipo y variando un poco:
+	•	cada clon cambia ligeramente el consumoMensual (ej. ±10%).
+	•	podés variar también pasajeros, tipo de caja, etc., si querés realismo.
+
+Resultado: List<Vehiculo> flota con, e.g., 10.000 autos.
+
+⸻
+
+2) Definir la tarea recursiva (RecursiveTask)
+
+Objetivo: sumar los consumos en paralelo, dividiendo el trabajo.
+	•	Clase conceptual: CalcularConsumo extends RecursiveTask<Double>
+	•	Parámetros que guarda:
+	•	Referencia a flota
+	•	Rangos: desde, hasta
+	•	Un UMBRAL (tamaño mínimo de subproblema para resolver de forma secuencial), p. ej. 500.
+
+Lógica de compute() (pseudocódigo):
+
+compute():
+  length = hasta - desde
+  si length <= UMBRAL:
+       total = suma de consumoMensual en [desde, hasta)
+       devolver total
+  sino:
+       medio = desde + length/2
+       tareaIzq = nueva CalcularConsumo(flota, desde, medio)
+       tareaDer = nueva CalcularConsumo(flota, medio, hasta)
+       tareaIzq.fork()                  // lanzo izquierda en paralelo
+       totalDer = tareaDer.compute()    // proceso derecha en este hilo
+       totalIzq = tareaIzq.join()       // espero el resultado de izquierda
+       devolver totalIzq + totalDer
+
+
+⸻
+
+3) Ejecutar en el ForkJoinPool
+
+Objetivo: que el pool reparta trabajo en varios hilos.
+	•	Crear/usar pool (común) y invocar la tarea raíz:
+	•	pool.invoke( new CalcularConsumo(flota, 0, flota.size()) )
+	•	El pool se encarga de:
+	•	ejecutar compute() de la raíz,
+	•	ir dividiendo mientras length > UMBRAL,
+	•	combinar resultados de las hojas (caso base).
+
+Salida: double totalConsumoMensualDeLaFlota.
+
+⸻
+
+4) Diagrama textual (tu caso)
+
+[TuProgramaMain]
+   └─ crea flota clonando prototipo (Prototype)
+         ↓  List<Vehiculo> (10.000)
+   └─ ForkJoinPool.invoke( CalcularConsumo(0..10000) )
+            compute()
+              ├─ fork → (0..5000)
+              └─ compute → (5000..10000)
+                     …
+            hojas (bloques ≤ 500) → suman directo consumoMensual
+            join + suma + return → suben hasta la raíz
+   └─ resultado final: totalConsumo
+
+
+⸻
+
+5) Cómo lo probás (checklist de test)
+	1.	Correctitud
+	•	Compará el resultado paralelo vs una suma secuencial (deberían coincidir).
+	2.	Casos borde
+	•	Lista vacía → 0.
+	•	Lista más chica que el UMBRAL → 1 sola suma secuencial.
+	3.	Rendimiento
+	•	Medí tiempo con N=10k / 50k / 100k.
+	•	Ajustá UMBRAL:
+	•	Muy chico ⇒ mucho overhead (peor rendimiento).
+	•	Muy grande ⇒ poca paralelización (parecido a secuencial).
+	4.	Inmutabilidad / datos compartidos
+	•	Solo leés consumoMensual en las tareas. No lo cambies durante el cómputo.
+
+⸻
+
+6) Qué contar en la entrega
+	•	Prototype: cómo generaste la flota rápido y consistente.
+	•	RecursiveTask: cómo divide (mitades) y combina (sumas).
+	•	Fork/Join: por qué mejora el tiempo en listas grandes.
+	•	Umbral: criterio de elección y pruebas de rendimiento.
+
+⸻
+
+7) Extensiones (si querés sumar valor)
+	•	Calcular por marca (suma por categoría) ⇒ mismas ideas, combinando mapas.
+	•	Calcular promedios o máximos (cambiás la operación de combinación).
+	•	Usar RecursiveAction si no necesitás devolver valor (p. ej., acumular en una estructura concurrente, aunque para suma es mejor devolver el valor).
+
+⸻
+
+Con esto tenés el mapa completo: Prototype para datos, RecursiveTask para dividir y resolver, y Fork/Join como motor de ejecución paralela. ¿Querés que te arme ahora una plantilla mínima (archivo y nombres de clases) para que completes tu implementación?

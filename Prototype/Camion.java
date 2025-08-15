@@ -4,7 +4,6 @@ public class Camion extends Vehiculo {
     public int capacidadCarga;
 
     public Camion() {
-        super();
     }
     
     public Camion(Camion target) {

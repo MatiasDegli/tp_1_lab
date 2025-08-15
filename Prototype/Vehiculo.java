@@ -1,12 +1,12 @@
 package Prototype;
 public abstract class Vehiculo {
     
-    public String modelo;
+    public int modelo;
     public String color;
     public String motor;
     public int cantidadRuedas;
 
-    public Vehiculo(String mo, String co, String mot, int r) {
+    public Vehiculo(int mo, String co, String mot, int r) {
         modelo=mo;
         color=co;
         motor=mot;
@@ -21,9 +21,15 @@ public abstract class Vehiculo {
             this.cantidadRuedas = target.cantidadRuedas;
         }
     }
-    
+
     public int verRuedas(){
         return cantidadRuedas;
+    }
+    public void setModelo(int m){
+        modelo=m;
+    }
+    public int getModelo(){
+        return modelo;
     }
     public abstract Vehiculo clonar();
 
@@ -32,7 +38,7 @@ public abstract class Vehiculo {
             return false;
         }
         Vehiculo vehiculo = (Vehiculo) obj;
-        return this.modelo.equals(vehiculo.modelo) &&
+        return this.modelo == vehiculo.modelo &&
                this.color.equals(vehiculo.color) &&
                this.motor.equals(vehiculo.motor) &&
                this.cantidadRuedas == vehiculo.cantidadRuedas;

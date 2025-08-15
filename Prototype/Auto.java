@@ -4,7 +4,7 @@ public class Auto extends Vehiculo {
     public String tipoCaja;
     public int cantidadPasajeros;
     
-    public Auto(String mo, String co, String mot, int r, String tc,int cp) {
+    public Auto(int mo, String co, String mot, int r, String tc,int cp) {
         super(mo, co, mot, r);
         tipoCaja=tc;
         cantidadPasajeros=cp;
