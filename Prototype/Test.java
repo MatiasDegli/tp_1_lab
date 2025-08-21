@@ -12,6 +12,8 @@ public class Test {
             autos[i].setModelo(i);
         }
         //Debera devolver 50005000 el paralelismo.
-        
+
+        //Explicar porque es util clonar autos
+        //Dar mas contexto de uso
     }
 }
