@@ -3,8 +3,8 @@ public class Camion extends Vehiculo {
 
     public int capacidadCarga;
 
-    public Camion(int mo, String co, String mot, int r, int cap) {
-        super(mo, co, mot, r);
+    public Camion(int mo, String co, String mot, int r, int cap,int cp) {
+        super(mo, co, mot, r, cp);
         capacidadCarga = cap;
     }
     

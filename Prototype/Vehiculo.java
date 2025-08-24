@@ -5,12 +5,14 @@ public abstract class Vehiculo {
     public String color;
     public String motor;
     public int cantidadRuedas;
+    public int cantidadPasajeros;
 
-    public Vehiculo(int mo, String co, String mot, int r) {
+    public Vehiculo(int mo, String co, String mot, int r, int cp) {
         modelo=mo;
         color=co;
         motor=mot;
         cantidadRuedas=r;
+        cantidadPasajeros=cp;
     }
 
     public Vehiculo(Vehiculo target) {
@@ -19,10 +21,17 @@ public abstract class Vehiculo {
             this.color = target.color;
             this.motor = target.motor;
             this.cantidadRuedas = target.cantidadRuedas;
+            this.cantidadPasajeros = target.cantidadPasajeros;
         }
     }
-
-    public int verRuedas(){
+    
+    public void setCantidadPasajeros(int cant){
+        cantidadPasajeros=cant;
+    }
+    public int getCantidadPasajeros(){
+        return cantidadPasajeros;
+    }
+    public int getCantidadRuedas(){
         return cantidadRuedas;
     }
     public void setModelo(int m){

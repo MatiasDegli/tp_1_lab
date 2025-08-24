@@ -2,19 +2,19 @@ package Prototype;
 public class Auto extends Vehiculo {
 
     public String tipoCaja;
-    public int cantidadPasajeros;
+    
     
     public Auto(int mo, String co, String mot, int r, String tc,int cp) {
-        super(mo, co, mot, r);
+        super(mo, co, mot, r, cp);
         tipoCaja=tc;
-        cantidadPasajeros=cp;
+        
     }
 
     public Auto(Auto target) {
         super(target);
         if(target != null) {
             this.tipoCaja = target.tipoCaja;
-            this.cantidadPasajeros = target.cantidadPasajeros;
+            
         }
     }
     
@@ -23,6 +23,7 @@ public class Auto extends Vehiculo {
         return new Auto(this);
     }
     
+
     public boolean equals(Object obj) {
         if(!(obj instanceof Auto)) {
             return false;

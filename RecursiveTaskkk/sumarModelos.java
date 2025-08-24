@@ -1,29 +1,46 @@
 package RecursiveTaskkk;
 
+import Prototype.Vehiculo;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
-
-import Prototype.Vehiculo;
 
 
 public class sumarModelos extends RecursiveTask <Integer> {
     private List<Vehiculo> lista;
     private int inicio;
     private int fin;
-    private static final int UMBRAL = 500;
+    private static final int UMBRAL = 5;
 
     public sumarModelos(List<Vehiculo> lista, int inicio, int fin) {
         this.lista = lista;
         this.inicio = inicio;
         this.fin = fin;
     }
+    
     private Integer calcularSuma() {
         int suma = 0;
+        final int anioActual = java.time.Year.now().getValue(); // independiente de la clase de test
+    
         for (int i = inicio; i < fin; i++) {
-            // Ejemplo: sumar longitud del modelo
-            suma += lista.get(i).getModelo();
+            Vehiculo v = lista.get(i);
+    
+            // Penalización por antigüedad (tope 60%)
+            int modelo = v.getModelo(); // año del vehículo
+            int edad = Math.max(0, anioActual - modelo);
+            int penalEdad = 100 - Math.min(60, 6 * edad);
+    
+            // Factor por cantidad de pasajeros
+            int pasajeros = v.getCantidadPasajeros();
+            int factorPasajeros =
+                    (pasajeros <= 2) ? 80 :
+                    (pasajeros <= 4) ? 100 : 120;
+    
+            // Aporte final (base simple = 10)
+            int aporte = 10 * penalEdad * factorPasajeros;
+            suma += aporte;
         }
-        return suma;
+    
+        return Math.round(suma); // la tarea devuelve Integer
     }
 
     @Override

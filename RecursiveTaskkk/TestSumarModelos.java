@@ -1,10 +1,10 @@
 package RecursiveTaskkk;
 
+import Prototype.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
-
-import Prototype.*;
 
 public class TestSumarModelos {
 
@@ -14,16 +14,22 @@ public class TestSumarModelos {
         int N = 10000;  // tamaño de la flota
         List<Vehiculo> flota = new ArrayList<>(N);
 
-        Auto prototipo = new Auto(1, "Azul", "Bm 2.0", 4,"Manual",4);
+        Auto prototipo = new Auto(1, "Azul", "Bm 2.0", 4,"Manual",5);
 
        
         Auto[] autos= new Auto[10001];
+         
+        Random rnd = new Random();
+        int anioActual = java.time.Year.now().getValue();
+
 
         for(int i=0; i<=N; i++){
             autos[i] = prototipo.clonar();
-            autos[i].setModelo(i);
+            autos[i].setModelo(1995 + rnd.nextInt(30));          // 1995–2024
+            autos[i].setCantidadPasajeros(2 + rnd.nextInt(5));   // 2–6
             flota.add(autos[i]);
         }
+
         // 2) Ejecutar en paralelo con Fork/Join
         ForkJoinPool pool = ForkJoinPool.commonPool();
 
@@ -32,11 +38,24 @@ public class TestSumarModelos {
         // 3) Verificación: suma secuencial (mismo criterio que calcularSuma)
 
         int totalSecuencial = 0;
-        for (Vehiculo v : flota) {
-            // Debe usar la MISMA “regla de valor” que tu calcularSuma()
-            totalSecuencial += v.getModelo();
+            for (int i = 0; i <= N; i++) {
+                Vehiculo v = flota.get(i);
+        
+                // Penalización por antigüedad (tope 60%)
+                int modelo = v.getModelo(); // año del vehículo
+                int edad = Math.max(0, anioActual - modelo);
+                int penalEdad = 100 - Math.min(60, 6 * edad);
+        
+                // Factor por cantidad de pasajeros
+                int pasajeros = v.getCantidadPasajeros();
+                int factorPasajeros =
+                        (pasajeros <= 2) ? 80 :
+                        (pasajeros <= 4) ? 100 : 120;
+        
+                // Aporte final (base simple = 10)
+                int aporte = 10 * penalEdad * factorPasajeros;
+            totalSecuencial += aporte;
         }
-
 
         // 4) Resultados
         System.out.println("Resultado Fork/Join: " + totalParalelo);
